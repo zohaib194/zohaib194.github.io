@@ -3,22 +3,35 @@
 <title>Tic-Tac-Toe</title>
 
 <style type="text/css">
+	body{
+		background-color: darkslategrey;
+	    display: flex;
+	    flex-direction: row;
+	    align-items: center;
+	    justify-content: center;
+	    padding-top: 10rem;
+	}
 	#PlayersContainer {
-		float: right;
+		padding-left: 3rem;
 	}
 	#canvas {
 		border: solid;
+   		width: 20%;
+   		background-color: white;
 	}
 	#Turn {
-		float: right;
-		color: red;
+	    color: red;
+	    align-content: center;
+	    position: absolute;
+	    top: 35rem;
+	    left: 48rem;
 	}
 </style>
 
 <body>
 
 
-<canvas id="canvas" width="700" height="600">
+<canvas id="canvas" width="600" height="600">
 </canvas>
 <div id="PlayersContainer">
 	<p>Player1: <input id="player1" value="Player1" type="input"/> </p>
@@ -34,11 +47,22 @@
 var rects = [];
 const NR_OF_TILES = 9;
 const TILE_SIZE = 100;
-const OFFSET = 200;
+const OFFSET = 50;
+
+var canvas = document.getElementById('canvas');
+
+if(!canvas) {
+	console.error("ERROR: Canvas is undefined!");
+}
+
+const CELL_X = canvas.width / 3;
+const CELL_Y = canvas.height / 3;
 
 var turn = 0;
 
 function createGrid(){
+	var canvas = document.getElementById('canvas');
+
 	var nextRow = 0;
 	var nextColumn = 0;
 	for (var i = 0; i < NR_OF_TILES; i++) {
@@ -52,8 +76,8 @@ function createGrid(){
 		}
 
 		rects.push({
-			x: nextRow * OFFSET,
-			y: nextColumn * OFFSET,
+			x: nextRow * CELL_X + OFFSET,
+			y: nextColumn * CELL_Y + OFFSET,
 			w: TILE_SIZE,
 			h: TILE_SIZE
 		});

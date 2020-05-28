@@ -3,62 +3,87 @@
 <title>Tic-Tac-Toe</title>
 
 <style type="text/css">
-	body{
+	body {
 		background-color: darkslategrey;
+		padding-top: 5rem;
+
+	}
+	.body{
 	    display: flex;
 	    flex-direction: row;
 	    align-items: center;
 	    justify-content: center;
-	    padding-top: 10rem;
+	}
+	h1{
+		text-align: center;
+    	font-size: -webkit-xxx-large;
 	}
 	#PlayersContainer {
 		padding-left: 3rem;
 	}
 	#canvas {
 		border: solid;
-   		width: 20%;
    		background-color: white;
 	}
-	#Turn {
+	#message {
 	    color: red;
 	    align-content: center;
 	    position: absolute;
 	    top: 35rem;
 	    left: 48rem;
 	}
+	input{
+		width: 100%;
+		padding: 1rem;
+	}
+	#player{
+		font-size: 20px;
+	}
+
 </style>
 
 <body>
 
+<h1>Tic Tac Toe </h1>
+<div class="body">
+	<canvas id="canvas" width="300" height="300">
+	</canvas>
+	<div id="PlayersContainer">
+		<p id="player">Player1: </p><input id="player1" value="Player1" type="input"/> 
+		<p id="player">Player2:  </p>
+		<input id="player2" value="Player2" type="input"/>
+	</div>
 
-<canvas id="canvas" width="600" height="600">
-</canvas>
-<div id="PlayersContainer">
-	<p>Player1: <input id="player1" value="Player1" type="input"/> </p>
-	<p>Player2: <input id="player2" value="Player2" type="input"/> </p>
+	<p id="message"></p>
 </div>
-
-<p id="Turn"></p>
-
 <script type="text/javascript">
 	
-
-
-var rects = [];
-const NR_OF_TILES = 9;
-const TILE_SIZE = 100;
-const OFFSET = 50;
-
 var canvas = document.getElementById('canvas');
 
 if(!canvas) {
 	console.error("ERROR: Canvas is undefined!");
 }
 
+const NR_OF_TILES = 9;
+const TILE_SIZE = canvas.width / 3 - 5;
+const OFFSET = 2.5;
 const CELL_X = canvas.width / 3;
 const CELL_Y = canvas.height / 3;
 
+const message = document.getElementById("message");
+const player1Name = document.getElementById("player1");
+const player2Name = document.getElementById("player2");
+const imgX = document.createElement("img");
+const imgO = document.createElement("img");
+imgX.src = "https://www.pngkit.com/png/detail/205-2056266_player-o-into-tic-tac-toe-img-tic.png";
+imgO.src = "https://www.pngkey.com/png/detail/205-2056274_tic-tac-toe-img-letter-o.png";
+
+var rects = [];
+var tilesUsed = [];
 var turn = 0;
+
+createGrid();
+drawGrid();
 
 function createGrid(){
 	var canvas = document.getElementById('canvas');
@@ -85,7 +110,6 @@ function createGrid(){
 }
 
 function drawGrid() {
-	// get canvas element.
 	var canvas = document.getElementById('canvas');
 	var context;
 
@@ -107,26 +131,29 @@ function drawGrid() {
 
 	canvas.onclick = evt => {
 		var clickedRect = getClickedRect(evt.offsetX, evt.offsetY);
-		var playerTurn = document.getElementById("Turn");
-		var player1Name = document.getElementById("player1");
-		var player2Name = document.getElementById("player2");
-		var imgX = document.createElement("img");
-		var imgO = document.createElement("img");
-		imgX.src = "https://www.pngkit.com/png/detail/205-2056266_player-o-into-tic-tac-toe-img-tic.png";
-		imgO.src = "https://www.pngkey.com/png/detail/205-2056274_tic-tac-toe-img-letter-o.png";
 
-		if(clickedRect != null) {
-
-			if(turn === 0) {
-				context.drawImage(imgX, clickedRect.x, clickedRect.y, clickedRect.w, clickedRect.h);
-				playerTurn.innerHTML = "Its " + player1Name.value + " turn!";
-				turn = 1;
-			} else {
-				context.drawImage(imgO, clickedRect.x, clickedRect.y, clickedRect.w, clickedRect.h);
-				playerTurn.innerHTML = "Its " + player2Name.value + " turn!";
-				turn = 0;
+		if(clickedRect != null) {			
+			if(tilesUsed.includes(clickedRect)) {
+				return;
 			}
 
+			if(turn === -1) {
+				return;
+			}
+
+			if(turn == 0) {
+				context.drawImage(imgX, clickedRect.x, clickedRect.y, clickedRect.w, clickedRect.h);
+				message.innerHTML = getPlayerName() + "'s turn!";
+				turn = 1;
+				checkGameState();
+			} else {
+				context.drawImage(imgO, clickedRect.x, clickedRect.y, clickedRect.w, clickedRect.h);
+				message.innerHTML = getPlayerName() + "'s turn!";
+				turn = 0;
+				checkGameState();
+			}
+
+			tilesUsed.push(clickedRect);
 		}
 	}
 }
@@ -145,8 +172,42 @@ function getClickedRect(xOffset, yOffset) {
 	return null;
 }
 
-createGrid();
-drawGrid();
+function checkGameState() {
+	var lastCheckedTile;
+	var count = 0;
+	for (var i = 0; i < tilesUsed.length; i++) {
+		if(lastCheckedTile) {
+
+			if (tilesUsed[i].x === lastCheckedTile.x) {
+				lastCheckedTile = tilesUsed[i];
+				count++;
+			}
+		}
+		lastCheckedTile = tilesUsed[i];
+	}
+
+	if(count === 2) {
+		console.log("Game WON!!!");
+		message.innerHTML = getLastPlayedName() + " has won the game!";
+		turn = -1;
+	}
+}
+
+function getPlayerName() {
+	if(turn === 0) {
+		return player1Name.value;
+	}
+
+	return player2Name.value;
+}
+
+function getLastPlayedName() {
+	if(turn === 0) {
+		return player2Name.value;
+	}
+
+	return player1Name.value;
+}
 
 </script>
 

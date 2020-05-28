@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<title>Tic-Tac-Toe</title>
+
+<style type="text/css">
+	#PlayersContainer {
+		float: right;
+	}
+	#canvas {
+		border: solid;
+	}
+	#Turn {
+		float: right;
+		color: red;
+	}
+</style>
+
+<body>
+
+
+<canvas id="canvas" width="700" height="600">
+</canvas>
+<div id="PlayersContainer">
+	<p>Player1: <input id="player1" value="Player1" type="input"/> </p>
+	<p>Player2: <input id="player2" value="Player2" type="input"/> </p>
+</div>
+
+<p id="Turn"></p>
+
+<script type="text/javascript">
+	
+
+
+var rects = [];
+const NR_OF_TILES = 9;
+const TILE_SIZE = 100;
+const OFFSET = 200;
+
+var turn = 0;
+
+function createGrid(){
+	var nextRow = 0;
+	var nextColumn = 0;
+	for (var i = 0; i < NR_OF_TILES; i++) {
+		if(i !== 0 && i % 3 === 0) {
+			nextRow += 1;
+			nextColumn = 0;
+		}
+
+		if(i % 3 !== 0) {
+			nextColumn += 1;
+		}
+
+		rects.push({
+			x: nextRow * OFFSET,
+			y: nextColumn * OFFSET,
+			w: TILE_SIZE,
+			h: TILE_SIZE
+		});
+	}
+}
+
+function drawGrid() {
+	// get canvas element.
+	var canvas = document.getElementById('canvas');
+	var context;
+
+	if(!canvas) {
+		console.error("ERROR: Canvas is undefined!");
+		return
+	}
+
+	context = canvas.getContext('2d');
+
+	if(!context) {
+		console.error("ERROR: Context is undefined!");
+		return;
+	}
+
+	for (var i = 0; i < rects.length; i++) {
+		context.fillRect(rects[i].x, rects[i].y, rects[i].w, rects[i].h);
+	}
+
+	canvas.onclick = evt => {
+		var clickedRect = getClickedRect(evt.offsetX, evt.offsetY);
+		var playerTurn = document.getElementById("Turn");
+		var player1Name = document.getElementById("player1");
+		var player2Name = document.getElementById("player2");
+		var imgX = document.createElement("img");
+		var imgO = document.createElement("img");
+		imgX.src = "https://www.pngkit.com/png/detail/205-2056266_player-o-into-tic-tac-toe-img-tic.png";
+		imgO.src = "https://www.pngkey.com/png/detail/205-2056274_tic-tac-toe-img-letter-o.png";
+
+		if(clickedRect != null) {
+
+			if(turn === 0) {
+				context.drawImage(imgX, clickedRect.x, clickedRect.y, clickedRect.w, clickedRect.h);
+				playerTurn.innerHTML = "Its " + player1Name.value + " turn!";
+				turn = 1;
+			} else {
+				context.drawImage(imgO, clickedRect.x, clickedRect.y, clickedRect.w, clickedRect.h);
+				playerTurn.innerHTML = "Its " + player2Name.value + " turn!";
+				turn = 0;
+			}
+
+		}
+	}
+}
+
+function getClickedRect(xOffset, yOffset) {
+	for (var i = 0; i < rects.length; i++) {
+		if(xOffset <= rects[i].x + rects[i].w
+			&& xOffset >= rects[i].x
+			&& yOffset <= rects[i].y + rects[i].h
+			&& yOffset >= rects[i].y) {
+			console.log("LOG: Rectangle " + i + " is clicked!");
+			return rects[i];
+		}
+	}
+
+	return null;
+}
+
+createGrid();
+drawGrid();
+
+</script>
+
+</body>
+</html>

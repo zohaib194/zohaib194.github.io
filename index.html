@@ -29,8 +29,8 @@
 	    color: red;
 	    align-content: center;
 	    position: absolute;
-	    top: 35rem;
-	    left: 48rem;
+		top: 32rem;
+   		left: 47rem;
 	}
 	input{
 		width: 100%;
@@ -84,6 +84,18 @@ var oHistory = {
 	xMovedTiles: [],
 	tilesUsed: []
 };
+
+var gameState = {
+	xRow: [],
+	xColumn: [],
+	xDiagonal: 0,
+	xAntiDiagonal: 0,
+	oRow: [],
+	oColumn: [],
+	oDiagonal: 0,
+	oAntiDiagonal: 0,
+}
+
 var turn = 0;
 
 createGrid();
@@ -105,6 +117,8 @@ function createGrid(){
 		}
 
 		rects.push({
+			row: nextRow,
+			column: nextColumn,
 			x: nextRow * CELL_X + OFFSET,
 			y: nextColumn * CELL_Y + OFFSET,
 			w: TILE_SIZE,
@@ -150,15 +164,17 @@ function drawGrid() {
 			if(turn == 0) {
 				context.drawImage(imgX, clickedRect.x, clickedRect.y, clickedRect.w, clickedRect.h);
 				message.innerHTML = getPlayerName() + "'s turn!";
-				turn = 1;
 				oHistory.xMovedTiles.push(clickedRect);
-				checkGameState();
+				if(!isWinState(clickedRect.row, clickedRect.column)){
+					turn = 1;
+				}
 			} else {
 				context.drawImage(imgO, clickedRect.x, clickedRect.y, clickedRect.w, clickedRect.h);
 				message.innerHTML = getPlayerName() + "'s turn!";
-				turn = 0;
 				oHistory.oMovedTiles.push(clickedRect);
-				checkGameState();
+				if(!isWinState(clickedRect.row, clickedRect.column)) {
+					turn = 0;
+				}
 			}
 
 		}
@@ -179,56 +195,68 @@ function getClickedRect(xOffset, yOffset) {
 	return null;
 }
 
-function checkGameState() {
-	var lastCheckedTile;
-	var countXInRow = 0;
-	var countXInColumn = 0;
-	var countOInRow = 0;
-	var countOInColumn = 0;
+function isWinState(row, column) {
+	
 
-	if(oHistory.xMovedTiles) {
-		for (var i = 0; i < oHistory.xMovedTiles.length; i++) {
-			if(lastCheckedTile) {
-				if (oHistory.xMovedTiles[i].x === lastCheckedTile.x) {
-					lastCheckedTile = oHistory.xMovedTiles[i];
-					countXInRow++;
-				}
+	if(turn == 0) {
 
-				if(oHistory.xMovedTiles[i].y === lastCheckedTile.y) {
-					lastCheckedTile = oHistory.xMovedTiles[i];
-					countXInColumn++;
-				}
-			}
-			lastCheckedTile = oHistory.xMovedTiles[i];
-		}		
+		// Store the number of X at the row.
+		gameState.xRow[row] = (gameState.xRow[row]) ? gameState.xRow[row] + 1 : 1;
+
+		// Store the number of X at the column.
+		gameState.xColumn[column] = (gameState.xColumn[column]) ? gameState.xColumn[column] + 1 : 1;
+		
+		// Store the number of X at diagonal.
+		if(row == column){
+			gameState.xDiagonal++;
+		}
+
+		// Store the number of X at anti diagonal.
+		if(row + column == 2){
+			gameState.xAntiDiagonal++;
+		}
+
+		// Checks if X has won the game.
+		if(gameState.xRow[row] == 3 
+			|| gameState.xColumn[column] == 3 
+			|| gameState.xDiagonal == 3 
+			|| gameState.xAntiDiagonal == 3) {
+			console.log("Game WON!!!");
+			message.innerHTML = getPlayerName() + " has won the game!";
+			turn = -1;
+			return true;
+		}
+
+	} else {
+		// Store the number of O at the row.
+		gameState.oRow[row] = (gameState.oRow[row]) ? gameState.oRow[row] + 1 : 1;
+		
+		// Store the number of O at the column.
+		gameState.oColumn[column] = (gameState.oColumn[column]) ? gameState.oColumn[column] + 1 : 1;
+		
+		// Store the number of O at diagonal.
+		if(row == column){
+			gameState.oDiagonal++;
+		}
+
+		// Store the number of O at anti diagonal.
+		if(row + column == 2){
+			gameState.oAntiDiagonal++;
+		}
+
+		// Checks if O has won the game.
+		if(gameState.oRow[row] == 3 
+			|| gameState.oColumn[column] == 3 
+			|| gameState.oDiagonal == 3 
+			|| gameState.oAntiDiagonal == 3) {
+			console.log("Game WON!!!");
+			message.innerHTML = getPlayerName() + " has won the game!";
+			turn = -1;
+			return true;
+		}
 	}
 
-	lastCheckedTile = null;
-
-	if(oHistory.oMovedTiles) {
-		for (var i = 0; i < oHistory.oMovedTiles.length; i++) {
-			if(lastCheckedTile) {
-				if (oHistory.oMovedTiles[i].x === lastCheckedTile.x) {
-					lastCheckedTile = oHistory.oMovedTiles[i];
-					countOInRow++;
-				}
-
-				if(oHistory.oMovedTiles[i].y === lastCheckedTile.y) {
-					lastCheckedTile = oHistory.oMovedTiles[i];
-					countOInColumn++;
-				}
-			}
-			lastCheckedTile = oHistory.oMovedTiles[i];
-		}		
-	}
-
-
-
-	if(countXInRow === 2 || countOInRow == 2 || countXInColumn == 2 || countOInColumn == 2) {
-		console.log("Game WON!!!");
-		message.innerHTML = getLastPlayedName() + " has won the game!";
-		turn = -1;
-	}
+	return false;
 }
 
 function getPlayerName() {
@@ -237,14 +265,6 @@ function getPlayerName() {
 	}
 
 	return player2Name.value;
-}
-
-function getLastPlayedName() {
-	if(turn === 0) {
-		return player2Name.value;
-	}
-
-	return player1Name.value;
 }
 
 </script>

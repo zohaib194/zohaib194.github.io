@@ -79,7 +79,11 @@ imgX.src = "https://www.pngkit.com/png/detail/205-2056266_player-o-into-tic-tac-
 imgO.src = "https://www.pngkey.com/png/detail/205-2056274_tic-tac-toe-img-letter-o.png";
 
 var rects = [];
-var tilesUsed = [];
+var oHistory = {
+	oMovedTiles: [],
+	xMovedTiles: [],
+	tilesUsed: []
+};
 var turn = 0;
 
 createGrid();
@@ -133,7 +137,7 @@ function drawGrid() {
 		var clickedRect = getClickedRect(evt.offsetX, evt.offsetY);
 
 		if(clickedRect != null) {			
-			if(tilesUsed.includes(clickedRect)) {
+			if(oHistory.tilesUsed.includes(clickedRect)) {
 				return;
 			}
 
@@ -141,19 +145,22 @@ function drawGrid() {
 				return;
 			}
 
+			oHistory.tilesUsed.push(clickedRect);
+
 			if(turn == 0) {
 				context.drawImage(imgX, clickedRect.x, clickedRect.y, clickedRect.w, clickedRect.h);
 				message.innerHTML = getPlayerName() + "'s turn!";
 				turn = 1;
+				oHistory.xMovedTiles.push(clickedRect);
 				checkGameState();
 			} else {
 				context.drawImage(imgO, clickedRect.x, clickedRect.y, clickedRect.w, clickedRect.h);
 				message.innerHTML = getPlayerName() + "'s turn!";
 				turn = 0;
+				oHistory.oMovedTiles.push(clickedRect);
 				checkGameState();
 			}
 
-			tilesUsed.push(clickedRect);
 		}
 	}
 }
@@ -174,19 +181,50 @@ function getClickedRect(xOffset, yOffset) {
 
 function checkGameState() {
 	var lastCheckedTile;
-	var count = 0;
-	for (var i = 0; i < tilesUsed.length; i++) {
-		if(lastCheckedTile) {
+	var countXInRow = 0;
+	var countXInColumn = 0;
+	var countOInRow = 0;
+	var countOInColumn = 0;
 
-			if (tilesUsed[i].x === lastCheckedTile.x) {
-				lastCheckedTile = tilesUsed[i];
-				count++;
+	if(oHistory.xMovedTiles) {
+		for (var i = 0; i < oHistory.xMovedTiles.length; i++) {
+			if(lastCheckedTile) {
+				if (oHistory.xMovedTiles[i].x === lastCheckedTile.x) {
+					lastCheckedTile = oHistory.xMovedTiles[i];
+					countXInRow++;
+				}
+
+				if(oHistory.xMovedTiles[i].y === lastCheckedTile.y) {
+					lastCheckedTile = oHistory.xMovedTiles[i];
+					countXInColumn++;
+				}
 			}
-		}
-		lastCheckedTile = tilesUsed[i];
+			lastCheckedTile = oHistory.xMovedTiles[i];
+		}		
 	}
 
-	if(count === 2) {
+	lastCheckedTile = null;
+
+	if(oHistory.oMovedTiles) {
+		for (var i = 0; i < oHistory.oMovedTiles.length; i++) {
+			if(lastCheckedTile) {
+				if (oHistory.oMovedTiles[i].x === lastCheckedTile.x) {
+					lastCheckedTile = oHistory.oMovedTiles[i];
+					countOInRow++;
+				}
+
+				if(oHistory.oMovedTiles[i].y === lastCheckedTile.y) {
+					lastCheckedTile = oHistory.oMovedTiles[i];
+					countOInColumn++;
+				}
+			}
+			lastCheckedTile = oHistory.oMovedTiles[i];
+		}		
+	}
+
+
+
+	if(countXInRow === 2 || countOInRow == 2 || countXInColumn == 2 || countOInColumn == 2) {
 		console.log("Game WON!!!");
 		message.innerHTML = getLastPlayedName() + " has won the game!";
 		turn = -1;

@@ -1,0 +1,90 @@
+body {
+	background-color: darkslategrey;
+	padding-top: 5rem;
+
+}
+.body{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+h1{
+	text-align: center;
+	font-size: -webkit-xxx-large;
+}
+#PlayersContainer {
+	padding-left: 3rem;
+}
+#canvas {
+	border: solid;
+		background-color: white;
+}
+#message {
+    color: red;
+    align-content: center;
+    position: absolute;
+	top: 32rem;
+		left: 47rem;
+}
+input{
+	width: 100%;
+	padding: 1rem;
+}
+#player{
+	font-size: 20px;
+}
+
+/* Center the loader */
+#loader {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  width: 150px;
+  height: 150px;
+  margin: -75px 0 0 -75px;
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid darkslategrey;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+div#MatchMaking {
+    border: solid;
+    background: #aa7403;
+    width: 35rem;
+    z-index: 1000;
+    position: relative;
+    height: 25rem;
+}
+
+span#serverMessage {
+    position: absolute;
+    width: 100%;
+    bottom: 4rem;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+span#MMTitle {
+	font-size: 2rem;
+    text-align: center;
+    background: bisque;
+    border: solid 1px;
+    display: inherit;
+}

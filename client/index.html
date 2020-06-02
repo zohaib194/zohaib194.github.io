@@ -12,16 +12,17 @@
 	<div id="MatchMaking">
 		<span id="MMTitle">Match Making</span>
 		<div id="loader"></div>
+		<div id="PlayersContainer">
+			<p id="playerName">Player Name: </p><input id="playerName" value="playerName" type="input"/> 
+		<!--	<p id="player">Player2:  </p>
+			<input id="player2" value="Player2" type="input"/>-->
+		</div>
 		<span id="serverMessage"> </span>
 	</div>
 
 	<div id="Game" style="display: none">
 		<canvas id="canvas" width="300" height="300"></canvas>
-		<div id="PlayersContainer">
-			<p id="player">Player1: </p><input id="player1" value="Player1" type="input"/> 
-			<p id="player">Player2:  </p>
-			<input id="player2" value="Player2" type="input"/>
-		</div>
+		
 
 
 		<p id="message"></p>
@@ -29,6 +30,7 @@
 	</div>
 </div>
 
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <script type="text/javascript" src="/socket.io/socket.io.js"></script>
 

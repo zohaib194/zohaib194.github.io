@@ -12,12 +12,14 @@ const CELL_X = canvas.width / 3;
 const CELL_Y = canvas.height / 3;
 
 const message = document.getElementById("message");
-const player1Name = document.getElementById("player1");
-const player2Name = document.getElementById("player2");
-const imgX = document.createElement("img");
-const imgO = document.createElement("img");
-imgX.src = "https://www.pngkit.com/png/detail/205-2056266_player-o-into-tic-tac-toe-img-tic.png";
-imgO.src = "https://www.pngkey.com/png/detail/205-2056274_tic-tac-toe-img-letter-o.png";
+const playerNameField= document.getElementById("playerName");
+//const player2Name = document.getElementById("player2");
+
+var images = [];
+images.push(document.createElement("img"));
+images.push(document.createElement("img"));
+images[0].src = "https://www.pngkit.com/png/detail/205-2056266_player-o-into-tic-tac-toe-img-tic.png";
+images[1].src = "https://www.pngkey.com/png/detail/205-2056274_tic-tac-toe-img-letter-o.png";
 
 var rects = [];
 var oHistory = {
@@ -38,9 +40,17 @@ var gameState = {
 }
 
 var turn = 0;
+var playerID;
+var playerName = "";
+
+///
+/// server connection.
+///
+const sock = io();
 
 createGrid();
 drawGrid();
+pickName();
 
 function createGrid(){
 	var canvas = document.getElementById('canvas');
@@ -88,36 +98,62 @@ function drawGrid() {
 		context.fillRect(rects[i].x, rects[i].y, rects[i].w, rects[i].h);
 	}
 
+	// On 2nd player move!
+	sock.on("Draw", (Obj) => {
+		context.drawImage(images[Obj.ID], Obj.tile.x, Obj.tile.y, Obj.tile.w, Obj.tile.h);
+	});
+
+	sock.on("changeTurn", (t) => {
+		turn = t;
+		//playerName = playerTurn.playerName;
+	});
+
 	canvas.onclick = evt => {
+
+		//sock.on("playersTurn", )
+
 		var clickedRect = getClickedRect(evt.offsetX, evt.offsetY);
 
 		if(clickedRect != null) {			
-			if(oHistory.tilesUsed.includes(clickedRect)) {
+			/*if(oHistory.tilesUsed.includes(clickedRect)) {
 				return;
 			}
 
 			if(turn === -1) {
 				return;
 			}
-
-			oHistory.tilesUsed.push(clickedRect);
-
+*/
 			if(turn == 0) {
-				context.drawImage(imgX, clickedRect.x, clickedRect.y, clickedRect.w, clickedRect.h);
-				message.innerHTML = getPlayerName() + "'s turn!";
-				oHistory.xMovedTiles.push(clickedRect);
-				if(!isWinState(clickedRect.row, clickedRect.column)){
-					turn = 1;
-				}
-			} else {
-				context.drawImage(imgO, clickedRect.x, clickedRect.y, clickedRect.w, clickedRect.h);
-				message.innerHTML = getPlayerName() + "'s turn!";
-				oHistory.oMovedTiles.push(clickedRect);
-				if(!isWinState(clickedRect.row, clickedRect.column)) {
-					turn = 0;
-				}
+				return;
 			}
+			// Sending turn to be stored as used tile in history.
+			//oHistory.tilesUsed.push(clickedRect);
+			sock.emit("usedTile", clickedRect);
 
+			//if(/*turn == 0 */ playerID == 0) {
+				//context.drawImage(images[playerID], clickedRect.x, clickedRect.y, clickedRect.w, clickedRect.h);
+				message.innerHTML = playerName + "'s turn!";
+
+				//oHistory.xMovedTiles.push(clickedRect);
+				//sock.emit("playerXMove", clickedRect);
+
+				sock.emit("checkWinState", clickedRect);
+
+				/*if(!isWinState(clickedRect.row, clickedRect.column)){
+					turn = 1;
+				}*/
+		/*	} else {
+				context.drawImage(images[playerID], clickedRect.x, clickedRect.y, clickedRect.w, clickedRect.h);
+				message.innerHTML = getPlayerName() + "'s turn!";
+				
+				//oHistory.oMovedTiles.push(clickedRect);
+				//sock.emit("playerOMove", clickedRect);
+				sock.emit("checkWinState", clickedRect);
+
+				/*if(!isWinState(clickedRect.row, clickedRect.column)) {
+					turn = 0;
+				}*/
+			//}
 		}
 	}
 }
@@ -209,6 +245,21 @@ function getPlayerName() {
 }
 
 
+function pickName() {
+
+	$.ajax({
+		url: 'https://randomuser.me/api/',
+		dataType: 'json',
+		success: function(data) {
+
+			playerNameField.value = data.results[0].name.title + " " + data.results[0].name.first + " " + data.results[0].name.last;
+
+		}
+	});
+
+
+}
+
 
 /*
 *
@@ -216,12 +267,26 @@ function getPlayerName() {
 * 
 */
 
-const sock = io();
+
 
 // On connection we receive "message" event from the server.
 sock.on("message", (text) => {
 	const serverMessage = document.querySelector("#serverMessage");
+	const matchMaking = document.querySelector("#MatchMaking");
+	const game = document.querySelector("#Game");
 
 	serverMessage.innerText = text;
 
+	sock.emit("playerName", {
+		ID: playerID,
+		name: playerNameField.value});
+
+	if(text == "The Game Starts!"){
+		game.style.display = "block";
+		matchMaking.style.display = "none";
+	}
+});
+
+sock.on("playerID", (ID) => {
+	playerID = ID;
 })

@@ -12,8 +12,6 @@ const CELL_X = canvas.width / 3;
 const CELL_Y = canvas.height / 3;
 
 const message = document.getElementById("message");
-const playerNameField= document.getElementById("playerName");
-//const player2Name = document.getElementById("player2");
 
 var images = [];
 images.push(document.createElement("img"));
@@ -40,8 +38,6 @@ var gameState = {
 }
 
 var turn = 0;
-var playerID;
-var playerName = "";
 
 ///
 /// server connection.
@@ -50,7 +46,6 @@ const sock = io();
 
 createGrid();
 drawGrid();
-pickName();
 
 function createGrid(){
 	var canvas = document.getElementById('canvas');
@@ -105,7 +100,6 @@ function drawGrid() {
 
 	sock.on("changeTurn", (t) => {
 		turn = t;
-		//playerName = playerTurn.playerName;
 	});
 
 	canvas.onclick = evt => {
@@ -132,7 +126,6 @@ function drawGrid() {
 
 			//if(/*turn == 0 */ playerID == 0) {
 				//context.drawImage(images[playerID], clickedRect.x, clickedRect.y, clickedRect.w, clickedRect.h);
-				message.innerHTML = playerName + "'s turn!";
 
 				//oHistory.xMovedTiles.push(clickedRect);
 				//sock.emit("playerXMove", clickedRect);
@@ -172,103 +165,75 @@ function getClickedRect(xOffset, yOffset) {
 	return null;
 }
 
-function isWinState(row, column) {
-	
-
-	if(turn == 0) {
-
-		// Store the number of X at the row.
-		gameState.xRow[row] = (gameState.xRow[row]) ? gameState.xRow[row] + 1 : 1;
-
-		// Store the number of X at the column.
-		gameState.xColumn[column] = (gameState.xColumn[column]) ? gameState.xColumn[column] + 1 : 1;
-		
-		// Store the number of X at diagonal.
-		if(row == column){
-			gameState.xDiagonal++;
-		}
-
-		// Store the number of X at anti diagonal.
-		if(row + column == 2){
-			gameState.xAntiDiagonal++;
-		}
-
-		// Checks if X has won the game.
-		if(gameState.xRow[row] == 3 
-			|| gameState.xColumn[column] == 3 
-			|| gameState.xDiagonal == 3 
-			|| gameState.xAntiDiagonal == 3) {
-			console.log("Game WON!!!");
-			message.innerHTML = getPlayerName() + " has won the game!";
-			turn = -1;
-			return true;
-		}
-
-	} else {
-		// Store the number of O at the row.
-		gameState.oRow[row] = (gameState.oRow[row]) ? gameState.oRow[row] + 1 : 1;
-		
-		// Store the number of O at the column.
-		gameState.oColumn[column] = (gameState.oColumn[column]) ? gameState.oColumn[column] + 1 : 1;
-		
-		// Store the number of O at diagonal.
-		if(row == column){
-			gameState.oDiagonal++;
-		}
-
-		// Store the number of O at anti diagonal.
-		if(row + column == 2){
-			gameState.oAntiDiagonal++;
-		}
-
-		// Checks if O has won the game.
-		if(gameState.oRow[row] == 3 
-			|| gameState.oColumn[column] == 3 
-			|| gameState.oDiagonal == 3 
-			|| gameState.oAntiDiagonal == 3) {
-			console.log("Game WON!!!");
-			message.innerHTML = getPlayerName() + " has won the game!";
-			turn = -1;
-			return true;
-		}
-	}
-
-	return false;
-}
-
-function getPlayerName() {
-	if(turn === 0) {
-		return player1Name.value;
-	}
-
-	return player2Name.value;
-}
-
-
-function pickName() {
-
-	$.ajax({
-		url: 'https://randomuser.me/api/',
-		dataType: 'json',
-		success: function(data) {
-
-			playerNameField.value = data.results[0].name.title + " " + data.results[0].name.first + " " + data.results[0].name.last;
-
-		}
-	});
-
-
-}
-
+//function isWinState(row, column) {
+//	
+//
+//	if(turn == 0) {
+//
+//		// Store the number of X at the row.
+//		gameState.xRow[row] = (gameState.xRow[row]) ? gameState.xRow[row] + 1 : 1;
+//
+//		// Store the number of X at the column.
+//		gameState.xColumn[column] = (gameState.xColumn[column]) ? gameState.xColumn[column] + 1 : 1;
+//		
+//		// Store the number of X at diagonal.
+//		if(row == column){
+//			gameState.xDiagonal++;
+//		}
+//
+//		// Store the number of X at anti diagonal.
+//		if(row + column == 2){
+//			gameState.xAntiDiagonal++;
+//		}
+//
+//		// Checks if X has won the game.
+//		if(gameState.xRow[row] == 3 
+//			|| gameState.xColumn[column] == 3 
+//			|| gameState.xDiagonal == 3 
+//			|| gameState.xAntiDiagonal == 3) {
+//			console.log("Game WON!!!");
+//			message.innerHTML = getPlayerName() + " has won the game!";
+//			turn = -1;
+//			return true;
+//		}
+//
+//	} else {
+//		// Store the number of O at the row.
+//		gameState.oRow[row] = (gameState.oRow[row]) ? gameState.oRow[row] + 1 : 1;
+//		
+//		// Store the number of O at the column.
+//		gameState.oColumn[column] = (gameState.oColumn[column]) ? gameState.oColumn[column] + 1 : 1;
+//		
+//		// Store the number of O at diagonal.
+//		if(row == column){
+//			gameState.oDiagonal++;
+//		}
+//
+//		// Store the number of O at anti diagonal.
+//		if(row + column == 2){
+//			gameState.oAntiDiagonal++;
+//		}
+//
+//		// Checks if O has won the game.
+//		if(gameState.oRow[row] == 3 
+//			|| gameState.oColumn[column] == 3 
+//			|| gameState.oDiagonal == 3 
+//			|| gameState.oAntiDiagonal == 3) {
+//			console.log("Game WON!!!");
+//			message.innerHTML = getPlayerName() + " has won the game!";
+//			turn = -1;
+//			return true;
+//		}
+//	}
+//
+//	return false;
+//}
 
 /*
 *
 * Server Connection
 * 
 */
-
-
-
 // On connection we receive "message" event from the server.
 sock.on("message", (text) => {
 	const serverMessage = document.querySelector("#serverMessage");
@@ -276,17 +241,14 @@ sock.on("message", (text) => {
 	const game = document.querySelector("#Game");
 
 	serverMessage.innerText = text;
-
-	sock.emit("playerName", {
-		ID: playerID,
-		name: playerNameField.value});
-
-	if(text == "The Game Starts!"){
-		game.style.display = "block";
-		matchMaking.style.display = "none";
-	}
+	setTimeout(() => {
+		if(text == "The Game Starts!"){
+			game.style.display = "block";
+			matchMaking.style.display = "none";
+		}
+	}, 2000);
 });
 
-sock.on("playerID", (ID) => {
-	playerID = ID;
-})
+sock.on("gameMessage", (msg) => {
+	message.innerHTML = msg;
+});

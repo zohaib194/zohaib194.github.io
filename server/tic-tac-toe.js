@@ -4,21 +4,16 @@ class TicTacToe {
 	constructor(p1, p2) {
 		this.players = [p1, p2];
 		this.names = [];
-		this.moves = [[], []];
 		this.oHistory = {
-			oMovedTiles: [],
-			xMovedTiles: [],
+			playerMoves: [[], []],
 			tilesUsed: []
 		};
 
+		this.randomPickPlayerToStart()
 
 		this.sendMessageToPlayers("The Game Starts!");
-		this.randomPickPlayerToStart();
 		
 		this.players.forEach((player, idx) => {
-			player.on("playerName", (player) => {
-				this.names[player.ID] = player.playerName;
-			});
 
 			player.on("usedTile", (tile) => {
 
@@ -34,26 +29,12 @@ class TicTacToe {
 
 				this.changeTurn(idx);
 				
-				// Update player screens.
-				/*if(player == this.players[0]) {
-					
-					this.players[1].emit("Draw", {ID: idx, tile: tile});
-
-					this.players[1].emit("validMove", {playerName: this.names[0], turn: 1});
-					
-					this.players[0].emit("turn", {playerName: this.names[1], turn: 0});
-				} else {
-					
-					this.players[0].emit("Draw", {ID: idx, tile: tile});
-					this.players[0].emit("validMove", {playerName: this.names[1], turn: 1});
-
-					this.players[1].emit("turn", {playerName: this.names[0], turn: 0});
-				} */
 			})
 
 			player.on("checkWinState", (move) => {
-				this.moves[idx].push(move);
-			})
+				this.oHistory.playerMoves[idx].push(move);
+				this.checkWinState();
+			});
 		});
 
 	/*	player[0].on("playerXMove", (move) => {
@@ -65,6 +46,8 @@ class TicTacToe {
 		})
 */
 	}
+
+
 
 	isTileUsed(tile) {
 		for (var i = 0; i < this.oHistory.tilesUsed.length; i++) {
@@ -83,21 +66,40 @@ class TicTacToe {
 	}
 
 	changeTurn(playerID) {
-		this.players[playerID].emit("changeTurn", 0)
+		this.players[playerID].emit("changeTurn", 0);
+		this.players[playerID].emit("gameMessage", "Opponent's turn!");
 		this.players[(playerID) ? 0 : 1].emit("changeTurn", 1);
+		this.players[(playerID) ? 0 : 1].emit("gameMessage", "Your turn!");
 	}
 
 	randomPickPlayerToStart() {
 		var playerToStart = Math.round(Math.random());
 
 		this.players[playerToStart].emit("changeTurn", 1);
+		
+		for (var i = 0; i < this.players.length; i++) {
+			if(playerToStart == i) {
+				this.players[i].emit("gameMessage", "Your turn!");
+			} else {
+				this.players[i].emit("gameMessage", "Opponent's turn!");
+			}
+		}
+
 	}
 
 	sendMessageToPlayers(msg) {
 		this.players.forEach((p, idx) => p.emit("playerID", idx));
 		this.players.forEach(p => p.emit("message", msg));
-		var randomPickPlayerIdx = Math.floor(Math.random());
-		this.players[randomPickPlayerIdx].emit({playerName: this.names[randomPickPlayerIdx], turn: 0});
+	}
+
+	checkWinState() {
+		for (var i = 0; i < this.oHistory.moves.length; i++) {
+			for (var j = 0; j < this.oHistory.moves[i].length; j++) {
+				
+
+				this.oHistory.moves[i][j]
+			}
+		}
 	}
 }
 

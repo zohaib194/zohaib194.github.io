@@ -23,9 +23,8 @@ h1{
 #message {
     color: red;
     align-content: center;
-    position: absolute;
-	top: 32rem;
-		left: 47rem;
+    display: grid;
+    justify-content: center;
 }
 input{
 	width: 100%;

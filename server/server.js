@@ -34,6 +34,6 @@ server.on("error", (err) => {
 	console.error("Server error", err);
 });
 
-server.listen(8080, () => {
+server.listen(process.env.PORT || 8080, () => {
 	console.log('Tic-Tac-Toe started on 8080');
 });

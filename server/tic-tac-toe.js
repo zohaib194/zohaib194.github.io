@@ -8,6 +8,16 @@ class TicTacToe {
 			playerMoves: [[], []],
 			tilesUsed: []
 		};
+		this.gameState = {
+			xRow: [],
+			xColumn: [],
+			xDiagonal: 0,
+			xAntiDiagonal: 0,
+			oRow: [],
+			oColumn: [],
+			oDiagonal: 0,
+			oAntiDiagonal: 0,
+		}
 
 		this.randomPickPlayerToStart()
 
@@ -23,31 +33,16 @@ class TicTacToe {
 				}
 				// Store the tile as used tiles.
 				this.oHistory.tilesUsed.push(tile);
-					console.log(this.oHistory.tilesUsed);
 
 				this.drawPlayerMovement(idx, tile);
 
-				this.changeTurn(idx);
-				
+				if(!this.checkForWinState(player, idx, tile)) {
+					this.changeTurn(idx);
+				}
 			})
-
-			player.on("checkWinState", (move) => {
-				this.oHistory.playerMoves[idx].push(move);
-				this.checkWinState();
-			});
+			
 		});
-
-	/*	player[0].on("playerXMove", (move) => {
-			this.oHistory.xMovedTiles.push(move);
-		})
-
-		player[1].on("playerOMove", (move) => {
-			this.oHistory.oMovedTiles.push(move);
-		})
-*/
 	}
-
-
 
 	isTileUsed(tile) {
 		for (var i = 0; i < this.oHistory.tilesUsed.length; i++) {
@@ -92,12 +87,84 @@ class TicTacToe {
 		this.players.forEach(p => p.emit("message", msg));
 	}
 
-	checkWinState() {
-		for (var i = 0; i < this.oHistory.moves.length; i++) {
-			for (var j = 0; j < this.oHistory.moves[i].length; j++) {
-				
+	checkForWinState(player, idx, tile) {
+		
+		this.oHistory.playerMoves[idx].push(tile);
 
-				this.oHistory.moves[i][j]
+		if(this.isWinState(tile.row, tile.column, idx)) {
+			this.sendGameWonState(idx);
+			return true;
+		}
+		
+		return false;
+	}
+
+	isWinState(row, column, idx) {
+
+		if(idx == 0) {
+			// Store the number of X at the row.
+			this.gameState.xRow[row] = (this.gameState.xRow[row]) ? this.gameState.xRow[row] + 1 : 1;
+
+			// Store the number of X at the column.
+			this.gameState.xColumn[column] = (this.gameState.xColumn[column]) ? this.gameState.xColumn[column] + 1 : 1;
+			
+			// Store the number of X at diagonal.
+			if(row == column){
+				this.gameState.xDiagonal++;
+			}
+
+			// Store the number of X at anti diagonal.
+			if(row + column == 2){
+				this.gameState.xAntiDiagonal++;
+			}
+
+			// Checks if X has won the game.
+			if(this.gameState.xRow[row] == 3 
+				|| this.gameState.xColumn[column] == 3 
+				|| this.gameState.xDiagonal == 3 
+				|| this.gameState.xAntiDiagonal == 3) {
+				
+				return true;
+			}
+		} else {
+			// Store the number of O at the row.
+			this.gameState.oRow[row] = (this.gameState.oRow[row]) ? this.gameState.oRow[row] + 1 : 1;
+			
+			// Store the number of O at the column.
+			this.gameState.oColumn[column] = (this.gameState.oColumn[column]) ? this.gameState.oColumn[column] + 1 : 1;
+			
+			// Store the number of O at diagonal.
+			if(row == column){
+				this.gameState.oDiagonal++;
+			}
+	
+			// Store the number of O at anti diagonal.
+			if(row + column == 2){
+				this.gameState.oAntiDiagonal++;
+			}
+	
+			// Checks if O has won the game.
+			if(this.gameState.oRow[row] == 3 
+				|| this.gameState.oColumn[column] == 3 
+				|| this.gameState.oDiagonal == 3 
+				|| this.gameState.oAntiDiagonal == 3) {
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	sendGameWonState(playerWonIdx) {
+		for (var i = 0; i < this.players.length; i++) {
+			this.players[i].emit("changeTurn", 0);
+			
+			if(i == playerWonIdx) {
+				this.players[i].emit("gameMessage", "You have won the game!");
+ 
+			} else {
+				this.players[i].emit("gameMessage", "You have lost the game!");
 			}
 		}
 	}

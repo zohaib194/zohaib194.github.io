@@ -20,22 +20,6 @@ images[0].src = "https://www.pngkit.com/png/detail/205-2056266_player-o-into-tic
 images[1].src = "https://www.pngkey.com/png/detail/205-2056274_tic-tac-toe-img-letter-o.png";
 
 var rects = [];
-var oHistory = {
-	oMovedTiles: [],
-	xMovedTiles: [],
-	tilesUsed: []
-};
-
-var gameState = {
-	xRow: [],
-	xColumn: [],
-	xDiagonal: 0,
-	xAntiDiagonal: 0,
-	oRow: [],
-	oColumn: [],
-	oDiagonal: 0,
-	oAntiDiagonal: 0,
-}
 
 var turn = 0;
 
@@ -104,49 +88,16 @@ function drawGrid() {
 
 	canvas.onclick = evt => {
 
-		//sock.on("playersTurn", )
-
 		var clickedRect = getClickedRect(evt.offsetX, evt.offsetY);
 
 		if(clickedRect != null) {			
-			/*if(oHistory.tilesUsed.includes(clickedRect)) {
-				return;
-			}
 
-			if(turn === -1) {
-				return;
-			}
-*/
 			if(turn == 0) {
 				return;
 			}
+
 			// Sending turn to be stored as used tile in history.
-			//oHistory.tilesUsed.push(clickedRect);
 			sock.emit("usedTile", clickedRect);
-
-			//if(/*turn == 0 */ playerID == 0) {
-				//context.drawImage(images[playerID], clickedRect.x, clickedRect.y, clickedRect.w, clickedRect.h);
-
-				//oHistory.xMovedTiles.push(clickedRect);
-				//sock.emit("playerXMove", clickedRect);
-
-				sock.emit("checkWinState", clickedRect);
-
-				/*if(!isWinState(clickedRect.row, clickedRect.column)){
-					turn = 1;
-				}*/
-		/*	} else {
-				context.drawImage(images[playerID], clickedRect.x, clickedRect.y, clickedRect.w, clickedRect.h);
-				message.innerHTML = getPlayerName() + "'s turn!";
-				
-				//oHistory.oMovedTiles.push(clickedRect);
-				//sock.emit("playerOMove", clickedRect);
-				sock.emit("checkWinState", clickedRect);
-
-				/*if(!isWinState(clickedRect.row, clickedRect.column)) {
-					turn = 0;
-				}*/
-			//}
 		}
 	}
 }
@@ -164,70 +115,6 @@ function getClickedRect(xOffset, yOffset) {
 
 	return null;
 }
-
-//function isWinState(row, column) {
-//	
-//
-//	if(turn == 0) {
-//
-//		// Store the number of X at the row.
-//		gameState.xRow[row] = (gameState.xRow[row]) ? gameState.xRow[row] + 1 : 1;
-//
-//		// Store the number of X at the column.
-//		gameState.xColumn[column] = (gameState.xColumn[column]) ? gameState.xColumn[column] + 1 : 1;
-//		
-//		// Store the number of X at diagonal.
-//		if(row == column){
-//			gameState.xDiagonal++;
-//		}
-//
-//		// Store the number of X at anti diagonal.
-//		if(row + column == 2){
-//			gameState.xAntiDiagonal++;
-//		}
-//
-//		// Checks if X has won the game.
-//		if(gameState.xRow[row] == 3 
-//			|| gameState.xColumn[column] == 3 
-//			|| gameState.xDiagonal == 3 
-//			|| gameState.xAntiDiagonal == 3) {
-//			console.log("Game WON!!!");
-//			message.innerHTML = getPlayerName() + " has won the game!";
-//			turn = -1;
-//			return true;
-//		}
-//
-//	} else {
-//		// Store the number of O at the row.
-//		gameState.oRow[row] = (gameState.oRow[row]) ? gameState.oRow[row] + 1 : 1;
-//		
-//		// Store the number of O at the column.
-//		gameState.oColumn[column] = (gameState.oColumn[column]) ? gameState.oColumn[column] + 1 : 1;
-//		
-//		// Store the number of O at diagonal.
-//		if(row == column){
-//			gameState.oDiagonal++;
-//		}
-//
-//		// Store the number of O at anti diagonal.
-//		if(row + column == 2){
-//			gameState.oAntiDiagonal++;
-//		}
-//
-//		// Checks if O has won the game.
-//		if(gameState.oRow[row] == 3 
-//			|| gameState.oColumn[column] == 3 
-//			|| gameState.oDiagonal == 3 
-//			|| gameState.oAntiDiagonal == 3) {
-//			console.log("Game WON!!!");
-//			message.innerHTML = getPlayerName() + " has won the game!";
-//			turn = -1;
-//			return true;
-//		}
-//	}
-//
-//	return false;
-//}
 
 /*
 *

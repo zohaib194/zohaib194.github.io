@@ -24,6 +24,7 @@ class TicTacToe {
 		this.sendMessageToPlayers("The Game Starts!");
 		
 		this.players.forEach((player, idx) => {
+			this.restartRequest(player, idx);
 
 			player.on("usedTile", (tile) => {
 
@@ -46,6 +47,37 @@ class TicTacToe {
 				}
 			})
 			
+		});
+	}
+
+	restartRequest(player, idx) {
+		player.on("restartRequest", (b) => {
+			this.players[(idx) ? 0 : 1].emit("restartRequest", true);
+		});
+
+		player.on("restartAccepted", (b) => {
+			// reset the the states and history.
+			this.oHistory = {
+				playerMoves: [[], []],
+				tilesUsed: []
+			};
+			this.gameState = {
+				xRow: [],
+				xColumn: [],
+				xDiagonal: 0,
+				xAntiDiagonal: 0,
+				oRow: [],
+				oColumn: [],
+				oDiagonal: 0,
+				oAntiDiagonal: 0,
+			}
+			this.randomPickPlayerToStart();
+
+			this.players.forEach(p => p.emit("restartGame", true));
+		});
+
+		player.on("restartDenied", (b) => {
+
 		});
 	}
 
@@ -188,6 +220,25 @@ class TicTacToe {
 					"opponent": 1
 				});
 			}
+		}
+	}
+
+	restart() {
+
+		sock.
+		this.oHistory = {
+			playerMoves: [[], []],
+			tilesUsed: []
+		};
+		this.gameState = {
+			xRow: [],
+			xColumn: [],
+			xDiagonal: 0,
+			xAntiDiagonal: 0,
+			oRow: [],
+			oColumn: [],
+			oDiagonal: 0,
+			oAntiDiagonal: 0,
 		}
 	}
 }

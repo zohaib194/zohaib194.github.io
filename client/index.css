@@ -63,7 +63,7 @@ input{
 }
 
 
-div#MatchMaking {
+div#MatchMaking{
     border: solid;
     background: #aa7403;
     width: 35rem;
@@ -72,6 +72,26 @@ div#MatchMaking {
     height: 25rem;
 }
 
+div#PlayAgain {
+    border: solid;
+    background: #aa7403;
+    width: 17rem;
+    z-index: 1000;
+    position: absolute;
+    height: 10rem;
+    display: none;
+}
+
+#yes {
+    width: 5rem;
+    margin-left: 3rem;
+    margin-top: 3rem;
+}
+
+#no {
+    width: 5rem;
+    margin-top: 3rem;
+}
 span#serverMessage {
     position: absolute;
     width: 100%;
@@ -81,6 +101,14 @@ span#serverMessage {
 }
 
 span#MMTitle {
+    font-size: 2rem;
+    text-align: center;
+    background: bisque;
+    border: solid 1px;
+    display: inherit;
+}
+
+span#PlayAgainTitle {
     font-size: 2rem;
     text-align: center;
     background: bisque;

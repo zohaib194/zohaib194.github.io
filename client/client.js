@@ -1,5 +1,5 @@
 	
-var canvas = document.getElementById('canvas');
+var canvas = document.querySelector('#canvas');
 
 if(!canvas) {
 	console.error("ERROR: Canvas is undefined!");
@@ -11,7 +11,13 @@ const OFFSET = 2.5;
 const CELL_X = canvas.width / 3;
 const CELL_Y = canvas.height / 3;
 
-const message = document.getElementById("message");
+const message = document.querySelector("#message");
+const restartButton = document.querySelector("#RestartButton");
+const serverMessage = document.querySelector("#serverMessage");
+const matchMaking = document.querySelector("#MatchMaking");
+const game = document.querySelector("#Game");
+const score = document.querySelector("#Score");
+const playAgain = document.querySelector("#PlayAgain");
 
 var images = [];
 images.push(document.createElement("img"));
@@ -32,8 +38,6 @@ createGrid();
 drawGrid();
 
 function createGrid(){
-	var canvas = document.getElementById('canvas');
-
 	var nextRow = 0;
 	var nextColumn = 0;
 	for (var i = 0; i < NR_OF_TILES; i++) {
@@ -58,7 +62,6 @@ function createGrid(){
 }
 
 function drawGrid() {
-	var canvas = document.getElementById('canvas');
 	var context;
 
 	if(!canvas) {
@@ -116,8 +119,18 @@ function getClickedRect(xOffset, yOffset) {
 	return null;
 }
 
+function resetOnClick() {
+	sock.emit("restartRequest", true);
+	message.innerText = "Request sent!";
+}
 
+function onYesClick() {
+	sock.emit("restartAccepted", true);
+}
 
+function onNoClick() {
+	sock.emit("restartDenied", true);
+}
 /*
 *
 * Server Connection
@@ -125,11 +138,6 @@ function getClickedRect(xOffset, yOffset) {
 */
 // On connection we receive "message" event from the server.
 sock.on("message", (text) => {
-	const serverMessage = document.querySelector("#serverMessage");
-	const matchMaking = document.querySelector("#MatchMaking");
-	const game = document.querySelector("#Game");
-	const score = document.querySelector("#Score");
-
 	serverMessage.innerText = text;
 	setTimeout(() => {
 		if(text == "The Game Starts!"){
@@ -143,6 +151,10 @@ sock.on("message", (text) => {
 
 sock.on("gameMessage", (msg) => {
 	message.innerHTML = msg;
+
+	if(msg.includes("won") || msg.includes("lost") || msg.includes("tie")) {
+		restartButton.style.display = "block";
+	}
 });
 
 sock.on("score", (scoreObj) => {
@@ -152,3 +164,20 @@ sock.on("score", (scoreObj) => {
 	yourScore.innerText = parseInt(yourScore.innerText) + scoreObj.you;
 	opponentScore.innerText = parseInt(opponentScore.innerText) + scoreObj.opponent;
 })
+
+sock.on("restartRequest", (b) => {
+	playAgain.style.display = "block";
+})
+
+sock.on("restartGame", (b) => {
+	playAgain.style.display = "none";
+
+	rects = [];
+	createGrid();
+	context = canvas.getContext('2d');
+	context.clearRect(0, 0, canvas.width, canvas.height);
+	drawGrid();
+
+	restartButton.style.display = "none";
+})
+

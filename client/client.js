@@ -167,6 +167,7 @@ sock.on("score", (scoreObj) => {
 
 sock.on("restartRequest", (b) => {
 	playAgain.style.display = "block";
+	restartButton.style.display = "none";
 })
 
 sock.on("restartGame", (b) => {
@@ -181,3 +182,6 @@ sock.on("restartGame", (b) => {
 	restartButton.style.display = "none";
 })
 
+sock.on("restartDenied", (b) => {
+	location.reload();
+})

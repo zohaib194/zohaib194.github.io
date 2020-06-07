@@ -77,7 +77,7 @@ class TicTacToe {
 		});
 
 		player.on("restartDenied", (b) => {
-
+			this.players.forEach(p => p.emit("restartDenied", true));
 		});
 	}
 
@@ -220,25 +220,6 @@ class TicTacToe {
 					"opponent": 1
 				});
 			}
-		}
-	}
-
-	restart() {
-
-		sock.
-		this.oHistory = {
-			playerMoves: [[], []],
-			tilesUsed: []
-		};
-		this.gameState = {
-			xRow: [],
-			xColumn: [],
-			xDiagonal: 0,
-			xAntiDiagonal: 0,
-			oRow: [],
-			oColumn: [],
-			oDiagonal: 0,
-			oAntiDiagonal: 0,
 		}
 	}
 }

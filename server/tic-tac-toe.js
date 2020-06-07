@@ -37,7 +37,12 @@ class TicTacToe {
 				this.drawPlayerMovement(idx, tile);
 
 				if(!this.checkForWinState(player, idx, tile)) {
-					this.changeTurn(idx);
+					if(this.isTieState()) {
+						this.players.forEach(p => p.emit("gameMessage", "It's a tie!"));
+						this.sendGameMessage
+					} else {
+						this.changeTurn(idx);
+					}
 				}
 			})
 			
@@ -96,6 +101,15 @@ class TicTacToe {
 			return true;
 		}
 		
+		return false;
+	}
+
+	isTieState() {
+		console.log(this.oHistory.tilesUsed.length)
+		if(this.oHistory.tilesUsed.length == 9) {
+			return true;
+		}
+
 		return false;
 	}
 

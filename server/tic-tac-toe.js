@@ -176,9 +176,17 @@ class TicTacToe {
 			
 			if(i == playerWonIdx) {
 				this.players[i].emit("gameMessage", "You have won the game!");
+				this.players[i].emit("score", {
+					"you": 1,
+					"opponent": 0
+				});
  
 			} else {
 				this.players[i].emit("gameMessage", "You have lost the game!");
+				this.players[i].emit("score", {
+					"you": 0,
+					"opponent": 1
+				});
 			}
 		}
 	}

@@ -18,7 +18,7 @@ h1{
 }
 #canvas {
 	border: solid;
-		background-color: white;
+	background-color: white;
 }
 #message {
     color: red;
@@ -36,30 +36,30 @@ input{
 
 /* Center the loader */
 #loader {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  z-index: 1;
-  width: 150px;
-  height: 150px;
-  margin: -75px 0 0 -75px;
-  border: 16px solid #f3f3f3;
-  border-radius: 50%;
-  border-top: 16px solid darkslategrey;
-  width: 120px;
-  height: 120px;
-  -webkit-animation: spin 2s linear infinite;
-  animation: spin 2s linear infinite;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 1;
+    width: 150px;
+    height: 150px;
+    margin: -75px 0 0 -75px;
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid darkslategrey;
+    width: 120px;
+    height: 120px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
 }
 
 @-webkit-keyframes spin {
-  0% { -webkit-transform: rotate(0deg); }
-  100% { -webkit-transform: rotate(360deg); }
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 
@@ -81,9 +81,39 @@ span#serverMessage {
 }
 
 span#MMTitle {
-	font-size: 2rem;
+    font-size: 2rem;
     text-align: center;
     background: bisque;
     border: solid 1px;
     display: inherit;
+}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+td {
+	text-align: center;
+}
+
+#Score {
+	display: none;
+    margin-right: 5rem;
+    margin-bottom: 5rem;
+}
+
+#RestartButton {
+	display: none;
+	height: 2rem;
+    margin-left: 2rem;
+    margin-top: 1rem;
+    width: 5rem;
 }

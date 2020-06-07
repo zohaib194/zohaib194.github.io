@@ -116,6 +116,8 @@ function getClickedRect(xOffset, yOffset) {
 	return null;
 }
 
+
+
 /*
 *
 * Server Connection
@@ -126,11 +128,14 @@ sock.on("message", (text) => {
 	const serverMessage = document.querySelector("#serverMessage");
 	const matchMaking = document.querySelector("#MatchMaking");
 	const game = document.querySelector("#Game");
+	const score = document.querySelector("#Score");
 
 	serverMessage.innerText = text;
 	setTimeout(() => {
 		if(text == "The Game Starts!"){
 			game.style.display = "block";
+			score.style.display = "block";
+
 			matchMaking.style.display = "none";
 		}
 	}, 2000);
@@ -139,3 +144,11 @@ sock.on("message", (text) => {
 sock.on("gameMessage", (msg) => {
 	message.innerHTML = msg;
 });
+
+sock.on("score", (scoreObj) => {
+	const yourScore = document.querySelector("#you");
+	const opponentScore = document.querySelector("#opponent");
+
+	yourScore.innerText = parseInt(yourScore.innerText) + scoreObj.you;
+	opponentScore.innerText = parseInt(opponentScore.innerText) + scoreObj.opponent;
+})
